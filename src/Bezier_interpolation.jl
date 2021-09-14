@@ -1,5 +1,16 @@
 Bez(t, p1, p2, a, b) = (1-t)^3 * p1 + 3 * t * (1-t)^2 * a + 3 * t^2 * (1-t) * b + t^3 * p2; 
 
+function get_a2b_Bez(x,a)
+    N = length(a)
+    b = zeros(N)
+    for n in 1:(N-1)
+        b[n] = 2*x[n+1] - a[n+1]
+    end
+    b[N] = 0.5*(a[N] + x[N+1])
+    return b
+end;
+
+
 function get_BezMat(N)
     Bez_mat = zeros(N,N);
     for n in 2:(N-1)
@@ -20,15 +31,6 @@ function get_BezVec(N, x)
     Bez_vec[N] = 8*x[N] + x[N+1]
     return Bez_vec
 end;
-function get_a2b_Bez(x,a)
-    N = length(a)
-    b = zeros(N)
-    for n in 1:(N-1)
-        b[n] = 2*x[n+1] - a[n+1]
-    end
-    b[N] = 0.5*(a[N] + x[N+1])
-    return b
-end;
 
 # Should be length(p_set) = N+1
 function get_a_b_Bezier(N, p_set)
@@ -38,7 +40,7 @@ function get_a_b_Bezier(N, p_set)
     #Ax=b
     #x = cholesky(A) \ b # if A is Hermetian
     a_vec = Bez_mat \ Bez_vec;
-    b_vec = get_a2b_Bez(N, p_set, a_vec);
+    b_vec = get_a2b_Bez(p_set, a_vec);
     return (a_vec, b_vec)
 end; 
 function get_integrated_Bezier_2nd()
